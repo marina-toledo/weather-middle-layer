@@ -6,11 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @Getter
 @Setter
-public class Snow {
+public class Snow implements Serializable {
 
     // Snow volume for last 3 hours
     @JsonProperty("3h")

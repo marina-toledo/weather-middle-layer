@@ -5,11 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @Getter
 @Setter
-public class Main {
+public class Main implements Serializable {
 
     //Temperature. Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit.
     Double temp;
