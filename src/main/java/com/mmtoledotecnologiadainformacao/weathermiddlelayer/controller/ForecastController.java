@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/weather")
 public class ForecastController {
@@ -21,11 +23,13 @@ public class ForecastController {
     @Autowired
     private ForecastService forecastService;
 
-    //todo Redis Cache
+    //todo refactor this endpoint, should only return the temperatures and not the whole weather information
     @GetMapping(value = "/forecast", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<WeatherApiData> getForecastForNextDays(@RequestParam(defaultValue = "5") Long day, @RequestParam("location") Long locationId) {
+    public ResponseEntity<WeatherApiData> getForecastForNextDays(HttpServletRequest request,
+                                                                 @RequestParam(defaultValue = "5") Long day,
+                                                                 @RequestParam("location") Long locationId) {
 
-        logger.info("Forwarding request to list the forecast for the next days to Open Weather API. Location ID: " + locationId);
+        logger.info("Request: " + request.getServletPath() + "?" + request.getQueryString());
 
         final WeatherApiData weatherApiData = this.forecastService.getForecastForNextDays(locationId);
         return ResponseEntity.ok(weatherApiData);
