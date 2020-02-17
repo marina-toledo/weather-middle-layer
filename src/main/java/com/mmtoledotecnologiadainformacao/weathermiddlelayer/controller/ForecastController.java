@@ -4,6 +4,7 @@ import com.mmtoledotecnologiadainformacao.weathermiddlelayer.controller.dto.outp
 import com.mmtoledotecnologiadainformacao.weathermiddlelayer.controller.dto.output.TemperatureOutputDto;
 import com.mmtoledotecnologiadainformacao.weathermiddlelayer.model.ApiData;
 import com.mmtoledotecnologiadainformacao.weathermiddlelayer.service.ForecastService;
+import com.mmtoledotecnologiadainformacao.weathermiddlelayer.service.WeatherApiCaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class ForecastController {
 
     @Autowired
     private ForecastService forecastService;
+
+    @Autowired
+    private WeatherApiCaller weatherApiCaller;
 
 
     /**
@@ -56,7 +60,7 @@ public class ForecastController {
 
         logger.info("Request: " + request.getServletPath() + "?" + request.getQueryString());
 
-        final ApiData apiData = this.forecastService.requestWeatherDataTo3rdAPI(locationId, unit); //todo cache serialization problem java.lang.ClassCastException cannot be cast to
+        final ApiData apiData = this.weatherApiCaller.requestWeatherDataTo3rdAPI(locationId, unit); //todo cache serialization problem java.lang.ClassCastException cannot be cast to
         return ResponseEntity.ok(TemperatureOutputDto.listFromApiData(apiData));
     }
 
