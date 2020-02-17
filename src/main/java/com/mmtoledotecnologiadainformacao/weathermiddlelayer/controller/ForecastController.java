@@ -51,11 +51,12 @@ public class ForecastController {
      */
     @GetMapping(value = "/locations/{locationId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TemperatureOutputDto>> getTemperaturesForTheNextFiveDays(HttpServletRequest request,
-                                                                                        @PathVariable("locationId") Long locationId) {
+                                                                                        @PathVariable("locationId") Long locationId,
+                                                                                        @RequestParam(defaultValue = "celsius") String unit) {
 
-        logger.info("Request: " + request.getServletPath());
+        logger.info("Request: " + request.getServletPath() + "?" + request.getQueryString());
 
-        final ApiData apiData = this.forecastService.requestWeatherDataFrom3rdAPI(locationId);
+        final ApiData apiData = this.forecastService.requestWeatherDataTo3rdAPI(locationId, unit);
         return ResponseEntity.ok(TemperatureOutputDto.listFromApiData(apiData));
     }
 
