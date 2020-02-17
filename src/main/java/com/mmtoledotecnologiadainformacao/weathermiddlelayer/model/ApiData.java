@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class WeatherApiData implements Serializable {
+public class ApiData implements Serializable {
 
     // Internal parameter
     String cod;
