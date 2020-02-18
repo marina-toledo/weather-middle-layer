@@ -14,8 +14,7 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
-
-import static java.util.Collections.singletonMap;
+import java.util.Map;
 
 /**
  * @link https://docs.spring.io/spring-data/redis/docs/2.2.4.RELEASE/reference/html/#redis:support:cache-abstraction
@@ -24,18 +23,12 @@ import static java.util.Collections.singletonMap;
 @EnableCaching
 public class CacheConfig extends CachingConfigurerSupport {
 
-    public static final String CALL_PER_MINUTE = "CALL_PER_MINUTE";
+    public static final String CACHE_MINUTE = "CACHE_MINUTE";
 
-    public static final String CALL_PER_DAY = "CALL_PER_DAY";
+    public static final String CACHE_DAY = "CACHE_DAY";
 
     @Value("${weather.cache.ttl.day}")
     private Integer cacheTTL;
-
-    @Value("${weather.api.max-calls.day}")
-    private Integer maxCallPerDay;
-
-    @Value("${weather.api.max-calls.minute}")
-    private Integer maxCallPerMinute;
 
 
     @Bean("customKeyGenerator")
@@ -58,12 +51,14 @@ public class CacheConfig extends CachingConfigurerSupport {
                 .entryTtl(Duration.ofDays(cacheTTL));
 
         RedisCacheConfiguration minuteConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(maxCallPerMinute));
+                .entryTtl(Duration.ofMinutes(1));
+
+        RedisCacheConfiguration dayConfig = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofDays(1));
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(defaultConfig)
-                //todo add cache for limit calls per day
-                .withInitialCacheConfigurations(singletonMap(CALL_PER_MINUTE, minuteConfig))
+                .withInitialCacheConfigurations(Map.of(CACHE_MINUTE, minuteConfig, CACHE_DAY, dayConfig))
                 .transactionAware()
                 .build();
     }

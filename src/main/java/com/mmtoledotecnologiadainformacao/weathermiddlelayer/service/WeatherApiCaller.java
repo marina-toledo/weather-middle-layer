@@ -14,13 +14,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.MessageFormat;
+import java.util.Map;
 
-import static com.mmtoledotecnologiadainformacao.weathermiddlelayer.configuration.CacheConfig.CALL_PER_MINUTE;
+import static com.mmtoledotecnologiadainformacao.weathermiddlelayer.configuration.CacheConfig.CACHE_DAY;
+import static com.mmtoledotecnologiadainformacao.weathermiddlelayer.configuration.CacheConfig.CACHE_MINUTE;
 
 @Component
 public class WeatherApiCaller {
 
     private static final Logger logger = LoggerFactory.getLogger(WeatherApiCaller.class);
+
+    private static final String COUNTER = "COUNTER";
 
     @Value("${weather.api.key}")
     private String weatherApiKey;
@@ -28,41 +32,40 @@ public class WeatherApiCaller {
     @Value("${weather.api.url}")
     private String weatherApiUrl;
 
-    @Value("${weather.api.max-calls.day}")
-    private Integer maxCallPerDay;
-
-    @Value("${weather.api.max-calls.minute}")
-    private Integer maxCallPerMinute;
-
     private RestTemplate restTemplate;
 
     private RedisCacheManager redisCacheManager;
 
+    private final Map<String, Integer> cacheMaxCall;
+
 
     @Autowired
-    public WeatherApiCaller(RestTemplate restTemplate, RedisCacheManager redisCacheManager) {
+    public WeatherApiCaller(RestTemplate restTemplate, RedisCacheManager redisCacheManager,
+                            @Value("${weather.api.max-calls.minute}") Integer maxCallPerMinute,
+                            @Value("${weather.api.max-calls.day}") Integer maxCallPerDay) {
         this.restTemplate = restTemplate;
         this.redisCacheManager = redisCacheManager;
+        cacheMaxCall = Map.of(CACHE_MINUTE, maxCallPerMinute, CACHE_DAY, maxCallPerDay);
     }
-
 
     //    "Algorithm Pattern: Rate limiter 2" shown in https://redis.io/commands/INCR
     public synchronized void checkRateLimit() {
-//todo add cache per day
-        Cache cache = redisCacheManager.getCache(CALL_PER_MINUTE);
-        Integer value = cache.get("count", Integer.class);
 
-        if (value != null && value >= maxCallPerMinute) {
-            throw new RuntimeException("RATE LIMIT CALL EXCEPTION");
-        }
+        cacheMaxCall.forEach((cacheName, maxCall) -> {
+            Cache cache = redisCacheManager.getCache(cacheName);
+            Integer value = cache.get(COUNTER, Integer.class);
 
-        if (value == null) {
-            cache.put("count", 1);
-        } else {
-            cache.put("count", value + 1);
-        }
+            if (value != null && value >= maxCall) {
+                throw new RuntimeException("RATE LIMIT CALL EXCEPTION");
+            }
+
+            if (value == null) {
+                cache.put(COUNTER, 1);
+            } else {
+                cache.put(COUNTER, value + 1);
+            }
+        });
     }
-
 
     @Cacheable(value = "forecast")
     public ApiData requestWeatherDataTo3rdAPI(Long cityId, String unit) {
