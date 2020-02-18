@@ -21,4 +21,4 @@ https://openweathermap.org/price
 http://api.openweathermap.org/data/2.5/forecast?id=6619279&appid=75a9e767825d0cf467e626e034630b95
 ###localhost
 http://localhost:8080/weather/locations/6619279?unit=celsius
-localhost:8080/weather/summary?unit=celsius&temperature=5&locations=6619279,707860
+http://localhost:8080/weather/summary?unit=celsius&temperature=5&locations=6619279,707860
