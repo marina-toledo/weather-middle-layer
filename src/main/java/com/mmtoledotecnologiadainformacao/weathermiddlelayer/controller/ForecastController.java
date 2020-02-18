@@ -61,7 +61,7 @@ public class ForecastController {
 
         logger.info("Request: " + request.getServletPath() + "?" + request.getQueryString());
 
-        final ApiData apiData = this.weatherApiCaller.requestWeatherDataTo3rdAPI(locationId, unit); //todo cache serialization problem java.lang.ClassCastException cannot be cast to
+        final ApiData apiData = this.weatherApiCaller.requestWeatherDataTo3rdAPI(locationId, unit);
         return ResponseEntity.ok(TemperatureOutputDto.listFromApiData(apiData));
     }
 
