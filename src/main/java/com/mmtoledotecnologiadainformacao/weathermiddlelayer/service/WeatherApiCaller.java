@@ -56,6 +56,7 @@ public class WeatherApiCaller {
             Integer counter = cache.get(COUNTER, Integer.class);
 
             if (counter != null && counter >= maxCall) {
+                logger.info(" App exceeded calls in " + cacheName + ". Max calls permitted is " + maxCall + ".");
                 throw new RateLimitException("Exceeded calls in " + cacheName + ". Max calls permitted is " + maxCall + ".");
             }
 
