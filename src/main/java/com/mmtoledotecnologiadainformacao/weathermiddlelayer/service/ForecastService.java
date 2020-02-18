@@ -1,6 +1,7 @@
 package com.mmtoledotecnologiadainformacao.weathermiddlelayer.service;
 
 import com.mmtoledotecnologiadainformacao.weathermiddlelayer.model.ApiData;
+import com.mmtoledotecnologiadainformacao.weathermiddlelayer.model.TemperatureApiUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class ForecastService {
     }
 
 
-    public List<ApiData> getLocationByNextDayTemperature(String temperatureUnit, String concatenatedLocationIds, Integer temperature) {
+    public List<ApiData> getLocationByNextDayTemperature(TemperatureApiUnit temperatureUnit, String concatenatedLocationIds, Integer temperature) {
 
         String[] locationId = concatenatedLocationIds.split(",");
 

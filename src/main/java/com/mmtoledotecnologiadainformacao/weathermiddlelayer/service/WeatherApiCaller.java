@@ -53,33 +53,30 @@ public class WeatherApiCaller {
 
         cacheMaxCall.forEach((cacheName, maxCall) -> {
             Cache cache = redisCacheManager.getCache(cacheName);
-            Integer value = cache.get(COUNTER, Integer.class);
+            Integer counter = cache.get(COUNTER, Integer.class);
 
-            if (value != null && value >= maxCall) {
-                throw new RuntimeException("RATE LIMIT CALL EXCEPTION");
+            if (counter != null && counter >= maxCall) {
+                throw new RateLimitException("Exceeded calls in " + cacheName + ". Max calls permitted is " + maxCall + ".");
             }
 
-            if (value == null) {
+            if (counter == null) {
                 cache.put(COUNTER, 1);
             } else {
-                cache.put(COUNTER, value + 1);
+                cache.put(COUNTER, counter + 1);
             }
         });
     }
 
     @Cacheable(value = "forecast")
-    public ApiData requestWeatherDataTo3rdAPI(Long cityId, String unit) {
+    public ApiData requestWeatherDataTo3rdAPI(Long cityId, TemperatureApiUnit unit) {
 
         logger.info("Forwarding request to list the forecast for the next days to Open Weather API. Location ID: " + cityId);
 
         checkRateLimit();
 
-        String apiUnit = TemperatureApiUnit.valueOf(unit.toUpperCase()).getApiUnit();
-
-        String url = MessageFormat.format(weatherApiUrl, Long.toString(cityId), weatherApiKey, apiUnit);
+        String url = MessageFormat.format(weatherApiUrl, Long.toString(cityId), weatherApiKey, unit.getApiUnit());
         ResponseEntity<ApiData> weatherApiData = restTemplate.getForEntity(url, ApiData.class);
         return weatherApiData.getBody();
-        //todo handle different responses from Third API, specially errors
     }
 
 }

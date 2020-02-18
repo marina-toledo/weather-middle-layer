@@ -3,6 +3,7 @@ package com.mmtoledotecnologiadainformacao.weathermiddlelayer.controller;
 import com.mmtoledotecnologiadainformacao.weathermiddlelayer.controller.dto.output.LocationOutputDto;
 import com.mmtoledotecnologiadainformacao.weathermiddlelayer.controller.dto.output.TemperatureOutputDto;
 import com.mmtoledotecnologiadainformacao.weathermiddlelayer.model.ApiData;
+import com.mmtoledotecnologiadainformacao.weathermiddlelayer.model.TemperatureApiUnit;
 import com.mmtoledotecnologiadainformacao.weathermiddlelayer.service.ForecastService;
 import com.mmtoledotecnologiadainformacao.weathermiddlelayer.service.WeatherApiCaller;
 import org.slf4j.Logger;
@@ -37,7 +38,7 @@ public class ForecastController {
      */
     @GetMapping(value = "/summary", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<LocationOutputDto>> getLocationByNextDayTemperature(HttpServletRequest request,
-                                                                                   @RequestParam("unit") String temperatureUnit,
+                                                                                   @RequestParam("unit") TemperatureApiUnit temperatureUnit,
                                                                                    @RequestParam("locations") String locations,
                                                                                    @RequestParam("temperature") Integer temperature) {
 
@@ -56,7 +57,7 @@ public class ForecastController {
     @GetMapping(value = "/locations/{locationId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TemperatureOutputDto>> getTemperaturesForTheNextFiveDays(HttpServletRequest request,
                                                                                         @PathVariable("locationId") Long locationId,
-                                                                                        @RequestParam(defaultValue = "celsius") String unit) {
+                                                                                        @RequestParam(defaultValue = "CELSIUS") TemperatureApiUnit unit) {
 
         logger.info("Request: " + request.getServletPath() + "?" + request.getQueryString());
 
