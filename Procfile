@@ -1,0 +1,1 @@
+web: java -jar target/weather-middle-layer-0.0.1-SNAPSHOT.jar

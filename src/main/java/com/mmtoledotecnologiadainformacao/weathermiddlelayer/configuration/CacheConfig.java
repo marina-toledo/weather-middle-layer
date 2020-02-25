@@ -13,6 +13,8 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.util.StringUtils;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.Map;
 
@@ -27,6 +29,9 @@ public class CacheConfig extends CachingConfigurerSupport {
 
     public static final String CACHE_DAY = "CACHE_DAY";
 
+    @Value("${environment.REDIS_URL:#{'redis://localhost:6379'}}")
+    private String redisUrl;
+
     @Value("${weather.cache.ttl.minute}")
     private Integer cacheTTL;
 
@@ -40,8 +45,10 @@ public class CacheConfig extends CachingConfigurerSupport {
     }
 
     @Bean
-    public LettuceConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(new RedisStandaloneConfiguration("localhost", 6379));
+    public RedisConnectionFactory redisConnectionFactory() throws URISyntaxException {
+
+        URI redisUri = new URI(redisUrl);
+        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(redisUri.getHost(), redisUri.getPort()));
     }
 
     @Bean
