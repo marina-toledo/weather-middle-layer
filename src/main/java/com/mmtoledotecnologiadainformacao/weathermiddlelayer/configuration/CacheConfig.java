@@ -27,7 +27,7 @@ public class CacheConfig extends CachingConfigurerSupport {
 
     public static final String CACHE_DAY = "CACHE_DAY";
 
-    @Value("${weather.cache.ttl.day}")
+    @Value("${weather.cache.ttl.minute}")
     private Integer cacheTTL;
 
 
@@ -48,7 +48,7 @@ public class CacheConfig extends CachingConfigurerSupport {
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
 
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofDays(cacheTTL));
+                .entryTtl(Duration.ofMinutes(cacheTTL));
 
         RedisCacheConfiguration minuteConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(1));
