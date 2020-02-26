@@ -29,7 +29,7 @@ public class CacheConfig extends CachingConfigurerSupport {
 
     public static final String CACHE_DAY = "CACHE_DAY";
 
-    @Value("${environment.REDIS_URL:#{'redis://localhost:6379'}}")
+    @Value("${REDIS_URL:redis://localhost:6379}")
     private String redisUrl;
 
     @Value("${weather.cache.ttl.minute}")
