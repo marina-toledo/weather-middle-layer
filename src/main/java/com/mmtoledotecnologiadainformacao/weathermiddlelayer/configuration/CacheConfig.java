@@ -47,8 +47,17 @@ public class CacheConfig extends CachingConfigurerSupport {
     @Bean
     public RedisConnectionFactory redisConnectionFactory() throws URISyntaxException {
 
-        URI redisUri = new URI(redisUrl);
-        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(redisUri.getHost(), redisUri.getPort()));
+        final URI redisUri = new URI(redisUrl);
+        final RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisUri.getHost(), redisUri.getPort());
+
+        if (redisUrl.contains("@")) {//has password
+            final String authority = redisUri.getAuthority();
+            final int start = authority.indexOf(':');
+            final int end = authority.indexOf('@');
+            configuration.setPassword(authority.substring(start + 1, end));
+        }
+
+        return new LettuceConnectionFactory(configuration);
     }
 
     @Bean
