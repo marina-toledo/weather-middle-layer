@@ -22,3 +22,7 @@ http://api.openweathermap.org/data/2.5/forecast?id=6619279&appid=75a9e767825d0cf
 ###localhost
 http://localhost:8080/weather/locations/6619279?unit=celsius
 http://localhost:8080/weather/summary?unit=celsius&temperature=5&locations=6619279,707860
+
+##CD/CI
+###Travis-CI
+###Heroku
